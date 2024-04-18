@@ -37,8 +37,15 @@ async function main() {
     const params = {
         exposure: 0.85,
         bloomStrength: 0.3,
-        bloomThreshold: 0.85,
+        bloomThreshold: 1.15,
         bloomRadius: 0
+    };
+    const effectController = {
+        bounces: 3.0,
+        ior: 4.8 ,
+        correctMips: true,
+        chromaticAberration: true,
+        aberrationStrength: 0.01
     };
     // Setup basic renderer, controls, and profiler
     const clientWidth = window.innerWidth ;
@@ -112,7 +119,7 @@ async function main() {
     // Objects
 
     // let diamondGeo = (await AssetManager.loadGLTFAsync("ATASAY_02.glb")).scene.children[0].children[1].children[0].geometry;
-    let diamondGeo = (await AssetManager.loadGLTFAsync("atasay2.glb")).scene.getObjectByName('dia007').geometry
+    let diamondGeo = (await AssetManager.loadGLTFAsync("atasayCorrectGLB.glb")).scene.getObjectByName('Ring_Diamond').geometry
     console.log(diamondGeo)
 
 
@@ -262,7 +269,7 @@ async function main() {
         // model
 
         const loader = new GLTFLoader().setPath( '' );
-        loader.load( 'atasay2.glb', function ( gltf ) {
+        loader.load( 'atasayCorrectGLB.glb', function ( gltf ) {
        
             diamondModel = gltf.scene
             diamondModel.scale.set(2.5,2.5,2.5);;
@@ -272,7 +279,7 @@ async function main() {
         //     diamondModelTopDiamond = diamondModel.getObjectByName('oval_gem').material
             // Diamond_Oval =  makeDiamond(diamondModel.getObjectByName('oval_gem').geometry)
         //     Diamond_OvalMat = Diamond_Oval.material
-        diamondModel.getObjectByName('dia007').layers.toggle( BLOOM_SCENE );
+        diamondModel.getObjectByName('Ring_Diamond').layers.toggle( BLOOM_SCENE );
         // diamondModel.getObjectByName('25mm00').layers.toggle( BLOOM_SCENE );
         // diamondModel.getObjectByName('25mm001').layers.toggle( BLOOM_SCENE );
         // selects.push( diamondModel.getObjectByName('DIAMOND_CELLS003') );
@@ -281,13 +288,13 @@ async function main() {
         // selects.push( diamondModel.getObjectByName('25mm002') );
         // selects.push( diamondModel.getObjectByName('25mm003') );
         diamondModel.layers.set(0)
-        diamondModel.getObjectByName('dia007').layers.set(1);
+        diamondModel.getObjectByName('Ring_Diamond').layers.set(1);
         // diamondModel.getObjectByName('25mm001').layers.set(1);
         // diamondModel.getObjectByName('25mm001').layers.set(1);
         // diamondModel.getObjectByName('DIAMOND_CELLS003_1').material =  makeDiamond(diamondModel.getObjectByName('DIAMOND_CELLS003_1').geometry,new THREE.Color(1,1,1),2).material
 
         // diamondModel.getObjectByName('DIAMOND_CELLS003').material =  makeDiamond(diamondModel.getObjectByName('DIAMOND_CELLS003').geometry,new THREE.Color(1,1,1),5).material
-        diamondModel.getObjectByName('dia007').material =  makeDiamond(diamondModel.getObjectByName('dia007').geometry,new THREE.Color(1,1,1),2).material
+        diamondModel.getObjectByName('Ring_Diamond').material =  makeDiamond(diamondModel.getObjectByName('Ring_Diamond').geometry,new THREE.Color(1,1,1),effectController.ior).material
         // diamondModel.getObjectByName('25mm003').material =  makeDiamond(diamondModel.getObjectByName('25mm001').geometry,new THREE.Color(1,1,1),2).material
         //     console.log( diamondModel.getObjectByName('oval_gem').material )
         //   console.log( diamondModel.getObjectByName('ring_1').children)
@@ -320,13 +327,7 @@ async function main() {
     composer.addPass(effectPass);
     composer.addPass(new ShaderPass(GammaCorrectionShader));
     // composer.addPass(smaaPass);
-    const effectController = {
-        bounces: 3.0,
-        ior: 2.4,
-        correctMips: true,
-        chromaticAberration: true,
-        aberrationStrength: 0.01
-    };
+
 
     const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
     bloomPass.threshold = params.bloomThreshold;
@@ -368,7 +369,7 @@ async function main() {
 
         // diamond.uniforms.ior = Number( value );
          // diamond.material.uniforms.bounces.value = effectController.bounces;
-         diamondModel.getObjectByName('dia007').material.uniforms.bounces.value = effectController.bounces;
+         diamondModel.getObjectByName('Ring_Diamond').material.uniforms.bounces.value = effectController.bounces;
          
 
     } );;;
@@ -376,7 +377,7 @@ async function main() {
 
         // diamond.uniforms.ior = Number( value );
          // diamond.material.uniforms.bounces.value = effectController.bounces;
-         diamondModel.getObjectByName('dia007').material.uniforms.ior.value = effectController.ior;
+         diamondModel.getObjectByName('Ring_Diamond').material.uniforms.ior.value = effectController.ior;
          
 
     } );
@@ -386,7 +387,7 @@ async function main() {
 
         // diamond.uniforms.ior = Number( value );
          // diamond.material.uniforms.bounces.value = effectController.bounces;
-         diamondModel.getObjectByName('dia007').material.uniforms.aberrationStrength.value = effectController.aberrationStrength;
+         diamondModel.getObjectByName('Ring_Diamond').material.uniforms.aberrationStrength.value = effectController.aberrationStrength;
          
 
     } );
@@ -473,7 +474,7 @@ async function main() {
     }
     function render() {
         // diamond.material.uniforms.bounces.value = effectController.bounces;
-        // diamondModel.material.uniforms.ior.value = effectController.ior;
+        // diamondModel.getObjectByName('Ring_Diamond').material.uniforms.ior.value = effectController.ior;
         // diamond.material.uniforms.correctMips.value = effectController.correctMips;
         // diamond.material.uniforms.chromaticAberration.value = effectController.chromaticAberration;
         // diamond.material.uniforms.aberrationStrength.value = effectController.aberrationStrength;
