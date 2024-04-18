@@ -49,7 +49,7 @@ async function main() {
 
     camera.layers.enable(1);
 
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(clientWidth, clientHeight);
     document.body.appendChild(renderer.domElement);
     // renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -265,7 +265,7 @@ async function main() {
         loader.load( 'atasay2.glb', function ( gltf ) {
        
             diamondModel = gltf.scene
-            diamondModel.scale.set(2.85,2.85,2.85);;
+            diamondModel.scale.set(2.5,2.5,2.5);;
             diamondModel.position.y = -5
             diamondModel.rotation.y = -Math.PI/4 -0.15
    
@@ -358,8 +358,11 @@ async function main() {
     // composer.addPass( ssrPass );
     
     // composer.addPass( new ShaderPass( GammaCorrectionShader ) );
+    const pixelRatio = renderer.getPixelRatio();
     const fxaaPass = new ShaderPass( FXAAShader );
-    // composer.addPass( fxaaPass );
+    fxaaPass.uniforms[ 'resolution' ].value.x = 1 / ( window.innerWidth * pixelRatio );
+    fxaaPass.uniforms[ 'resolution' ].value.y = 1 / ( window.innerHeight * pixelRatio );
+    composer.addPass( fxaaPass );
     const gui = new GUI();
     gui.add(effectController, "bounces", 1.0, 10.0, 1.0).name("Bounces").onChange( function ( value ) {
 
